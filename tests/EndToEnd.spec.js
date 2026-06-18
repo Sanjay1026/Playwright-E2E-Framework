@@ -1,52 +1,53 @@
-import { expect, test } from "@playwright/test";
-import LoginPage from "../PageObjectModel/LoginPage";
-import Dashboardpage from "../PageObjectModel/DashboardPage";
-import CartPage from "../PageObjectModel/CartPage";
-import Checkoutpage from "../PageObjectModel/CheckoutPage";
-import Orderpage from "../PageObjectModel/OrderPage";
+import { expect, test } from "../Fixtures/pageFixtures";
 import testdata from "../TestData/placeOrderTestData.json";
 
-test("End to End testing", async ({ page }) => {
-  const productName = testdata.productName;
-  const username = testdata.username;
-  const password = testdata.password;
+for (const data of testdata) {
+  test(`End to End testing for -${data.productName}`, async ({
+    page,
+    loginPage,
+    dashboardPage,
+    cartPage,
+    checkoutPage,
+    orderPage,
+  }, testInfo) => {
+    const { productName, username, password } = data;
+    await loginPage.launch(process.env.BASE_URL);
 
-  const login = new LoginPage(page);
-  await login.launch(testdata.url);
-  await login.validateLogin(username, password);
+    const screenshot = await page.screenshot();
+    await testInfo.attach("Login Screenshot", {
+      body: screenshot,
+      contentType: "image/png",
+    });
 
-  const dashboard = new Dashboardpage(page);
-  await dashboard.searchProductAddCart(productName);
-  await dashboard.navigateToCart();
+    await loginPage.validateLogin(username, password);
 
-  const cart = new CartPage(page);
-  await cart.waitForCartPageToLoad();
-  // verify product exist
-  const bool = await cart.verifyProductName(productName);
-  await expect(bool).toBeTruthy();
-  await cart.navigateTocheckout();
+    await dashboardPage.searchProductAddCart(productName);
+    await dashboardPage.navigateToCart();
 
-  const checkOut = new Checkoutpage(page);
-  // Assertion
-  const email = await checkOut.verifyUserName();
-  await expect(email).toHaveText(username);
+    await cartPage.waitForCartPageToLoad();
+    // verify product exist
+    const bool = await cartPage.verifyProductName(productName);
+    await expect(bool).toBeTruthy();
+    await cartPage.navigateTocheckout();
 
-  await checkOut.fillPaymentDetails();
-  await checkOut.selectCountry();
-  await checkOut.PlaceOrder();
+    // Assertion
+    const email = await checkoutPage.verifyUserName();
+    await expect(email).toHaveText(username);
 
-  // get the orderId
-  let OriginalOrderId = await checkOut.getOrderId();
-  console.log("OrderId is: " + OriginalOrderId);
+    await checkoutPage.fillPaymentDetails();
+    await checkoutPage.selectCountry();
+    await checkoutPage.PlaceOrder();
 
-  // Assertion
-  const msg = await checkOut.verifyOrderPlaced();
-  await expect(msg).toHaveText(" Thankyou for the order. ");
+    // get the orderId
+    let OriginalOrderId = await checkoutPage.getOrderId();
+    console.log("OrderId is: " + OriginalOrderId);
 
-  await checkOut.navigateToOrdersPage();
+    // Assertion
+    const msg = await checkoutPage.verifyOrderPlaced();
+    await expect(msg).toHaveText(" Thankyou for the order. ");
+    await checkoutPage.navigateToOrdersPage();
 
-  const orders = new Orderpage(page);
-
-  await orders.waitOrderpageToLoad();
-  await orders.verifyOrderId(OriginalOrderId);
-});
+    await orderPage.waitOrderpagoLoad();
+    await orderPage.verifyOrderId(OriginalOrderId);
+  });
+}

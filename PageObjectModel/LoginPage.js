@@ -19,3 +19,15 @@ class LoginPage {
 }
 
 export default LoginPage;
+
+
+  // {
+  //   "username": "chutki123@gmail.com",
+  //   "password": "Dummy@123",
+  //   "productName": "ADIDAS ORIGINAL"
+  // },
+  // {
+  //   "username": "mightyraju222@gmail.com",
+  //   "password": "Raju@123",
+  //   "productName": "ZARA COAT 3"
+  // }

@@ -10,11 +10,11 @@ class Orderpage {
 
   async verifyOrderId(orderId) {
     const rowCount = await this.rows.count();
-    console.log("No of rows: " + rowCount);
+    // console.log("No of rows: " + rowCount);    // optional
 
     for (let i = 0; i < rowCount; i++) {
       const rowOrderId = await this.rows.nth(i).locator("th").textContent();
-      console.log(rowOrderId);
+      console.log("OrderId After Verifying " + rowOrderId);
 
       if (rowOrderId === orderId) {
         //   console.log(rowOrderId);

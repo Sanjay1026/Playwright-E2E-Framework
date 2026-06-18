@@ -1,5 +1,7 @@
 // @ts-check
 import { defineConfig, devices } from "@playwright/test";
+import dotenv from "dotenv";
+dotenv.config();
 
 /**
  * Read environment variables from file.
@@ -30,7 +32,9 @@ export default defineConfig({
     // baseURL: 'http://localhost:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: "on-first-retry",
+    trace: "retain-on-failure",
+    screenshot: "only-on-failure",
+    vedio: "off",
   },
 
   /* Configure projects for major browsers */

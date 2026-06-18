@@ -28,7 +28,7 @@ class Checkoutpage {
     const dropdown = await this.page.locator("[class*=ta-results ]");
     await dropdown.waitFor();
     const optionsCounnt = await dropdown.locator("button").count();
-    console.log("Dropdown Count:" + optionsCounnt);
+    // console.log("Dropdown Count:" + optionsCounnt);  // optional
 
     for (let i = 0; i < optionsCounnt; i++) {
       const text = await dropdown.locator("button").nth(i).textContent();
